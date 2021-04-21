@@ -17,17 +17,10 @@
  */
 package org.jgrapht.alg.clique;
 
+import org.jgrapht.*;
 
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
-import org.jgrapht.Graph;
-import org.jgrapht.GraphTests;
-
+import java.util.*;
+import java.util.concurrent.*;
 
 /**
  * Bron-Kerbosch maximal clique enumeration algorithm.
@@ -83,21 +76,21 @@ public class BronKerboschCliqueFinder<V, E>
     @Override
     protected void lazyRun()
     {
-        if (getAllMaximalCliques() == null) {
-            if (!GraphTests.isSimple(getGraph())) {
+        if (allMaximalCliques == null) {
+            if (!GraphTests.isSimple(graph)) {
                 throw new IllegalArgumentException("Graph must be simple");
             }
-            setAllMaximalCliques(new ArrayList<>());
+            allMaximalCliques = new ArrayList<>();
 
             long nanosTimeLimit;
             try {
-                nanosTimeLimit = Math.addExact(System.nanoTime(), getNanos());
+                nanosTimeLimit = Math.addExact(System.nanoTime(), nanos);
             } catch (ArithmeticException ignore) {
                 nanosTimeLimit = Long.MAX_VALUE;
             }
 
             findCliques(
-                new ArrayList<>(), new ArrayList<>(getGraph().vertexSet()), new ArrayList<>(),
+                new ArrayList<>(), new ArrayList<>(graph.vertexSet()), new ArrayList<>(),
                 nanosTimeLimit);
         }
     }
@@ -111,7 +104,7 @@ public class BronKerboschCliqueFinder<V, E>
          * nodes.
          */
         for (V v : alreadyFound) {
-            if (candidates.stream().allMatch(c -> getGraph().containsEdge(v, c))) {
+            if (candidates.stream().allMatch(c -> graph.containsEdge(v, c))) {
                 return;
             }
         }
@@ -124,7 +117,7 @@ public class BronKerboschCliqueFinder<V, E>
              * Check if timeout
              */
             if (nanosTimeLimit - System.nanoTime() < 0) {
-                setTimeLimitReached(true);
+                timeLimitReached = true;
                 return;
             }
 
@@ -138,7 +131,7 @@ public class BronKerboschCliqueFinder<V, E>
             // create newCandidates by removing nodes in candidates not
             // connected to candidate node
             for (V newCandidate : candidates) {
-                if (getGraph().containsEdge(candidate, newCandidate)) {
+                if (graph.containsEdge(candidate, newCandidate)) {
                     newCandidates.add(newCandidate);
                 }
             }
@@ -146,7 +139,7 @@ public class BronKerboschCliqueFinder<V, E>
             // create newAlreadyFound by removing nodes in alreadyFound
             // not connected to candidate node
             for (V newFound : alreadyFound) {
-                if (getGraph().containsEdge(candidate, newFound)) {
+                if (graph.containsEdge(candidate, newFound)) {
                     newAlreadyFound.add(newFound);
                 }
             }
@@ -155,8 +148,8 @@ public class BronKerboschCliqueFinder<V, E>
             if (newCandidates.isEmpty() && newAlreadyFound.isEmpty()) {
                 // potential clique is maximal clique
                 Set<V> maximalClique = new HashSet<>(potentialClique);
-                getAllMaximalCliques().add(maximalClique);
-                setMaxSize(Math.max(getMaxSize(), maximalClique.size()));
+                allMaximalCliques.add(maximalClique);
+                maxSize = Math.max(maxSize, maximalClique.size());
             } else {
                 // recursive call
                 findCliques(potentialClique, newCandidates, newAlreadyFound, nanosTimeLimit);

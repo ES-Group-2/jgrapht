@@ -17,17 +17,11 @@
  */
 package org.jgrapht.alg.clique;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import org.jgrapht.*;
 
-import org.jgrapht.Graph;
-import org.jgrapht.GraphTests;
-import org.jgrapht.Graphs;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.stream.*;
 
 /**
  * Bron-Kerbosch maximal clique enumeration algorithm with pivot.
@@ -88,21 +82,21 @@ public class PivotBronKerboschCliqueFinder<V, E>
     @Override
     protected void lazyRun()
     {
-        if (getAllMaximalCliques() == null) {
-            if (!GraphTests.isSimple(getGraph())) {
+        if (allMaximalCliques == null) {
+            if (!GraphTests.isSimple(graph)) {
                 throw new IllegalArgumentException("Graph must be simple");
             }
-            setAllMaximalCliques(new ArrayList<>());
+            allMaximalCliques = new ArrayList<>();
 
             long nanosTimeLimit;
             try {
-                nanosTimeLimit = Math.addExact(System.nanoTime(), getNanos());
+                nanosTimeLimit = Math.addExact(System.nanoTime(), nanos);
             } catch (ArithmeticException ignore) {
                 nanosTimeLimit = Long.MAX_VALUE;
             }
 
             findCliques(
-                new HashSet<>(getGraph().vertexSet()), new HashSet<>(), new HashSet<>(), nanosTimeLimit);
+                new HashSet<>(graph.vertexSet()), new HashSet<>(), new HashSet<>(), nanosTimeLimit);
         }
     }
 
@@ -122,8 +116,8 @@ public class PivotBronKerboschCliqueFinder<V, E>
         while (it.hasNext()) {
             V u = it.next();
             int count = 0;
-            for (E e : getGraph().edgesOf(u)) {
-                if (P.contains(Graphs.getOppositeVertex(getGraph(), e, u))) {
+            for (E e : graph.edgesOf(u)) {
+                if (P.contains(Graphs.getOppositeVertex(graph, e, u))) {
                     count++;
                 }
             }
@@ -151,8 +145,8 @@ public class PivotBronKerboschCliqueFinder<V, E>
          */
         if (P.isEmpty() && X.isEmpty()) {
             Set<V> maximalClique = new HashSet<>(R);
-            getAllMaximalCliques().add(maximalClique);
-            setMaxSize(Math.max(getMaxSize(), maximalClique.size()));
+            allMaximalCliques.add(maximalClique);
+            maxSize = Math.max(maxSize, maximalClique.size());
             return;
         }
 
@@ -160,7 +154,7 @@ public class PivotBronKerboschCliqueFinder<V, E>
          * Check if timeout
          */
         if (nanosTimeLimit - System.nanoTime() < 0) {
-            setTimeLimitReached(true);
+            timeLimitReached = true;
             return;
         }
 
@@ -173,8 +167,8 @@ public class PivotBronKerboschCliqueFinder<V, E>
          * Find candidates for addition
          */
         Set<V> uNeighbors = new HashSet<>();
-        for (E e : getGraph().edgesOf(u)) {
-            uNeighbors.add(Graphs.getOppositeVertex(getGraph(), e, u));
+        for (E e : graph.edgesOf(u)) {
+            uNeighbors.add(Graphs.getOppositeVertex(graph, e, u));
         }
         Set<V> candidates = new HashSet<>();
         for (V v : P) {
@@ -188,8 +182,8 @@ public class PivotBronKerboschCliqueFinder<V, E>
          */
         for (V v : candidates) {
             Set<V> vNeighbors = new HashSet<>();
-            for (E e : getGraph().edgesOf(v)) {
-                vNeighbors.add(Graphs.getOppositeVertex(getGraph(), e, v));
+            for (E e : graph.edgesOf(v)) {
+                vNeighbors.add(Graphs.getOppositeVertex(graph, e, v));
             }
 
             Set<V> newP = P.stream().filter(vNeighbors::contains).collect(Collectors.toSet());

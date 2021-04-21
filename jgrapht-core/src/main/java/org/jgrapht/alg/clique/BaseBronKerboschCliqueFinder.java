@@ -17,14 +17,11 @@
  */
 package org.jgrapht.alg.clique;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
+import org.jgrapht.*;
+import org.jgrapht.alg.interfaces.*;
 
-import org.jgrapht.Graph;
-import org.jgrapht.alg.interfaces.MaximalCliqueEnumerationAlgorithm;
+import java.util.*;
+import java.util.concurrent.*;
 
 /**
  * Base implementation of the Bron-Kerbosch algorithm.
@@ -41,23 +38,23 @@ abstract class BaseBronKerboschCliqueFinder<V, E>
     /**
      * The underlying graph
      */
-    private final Graph<V, E> graph;
+    protected final Graph<V, E> graph;
     /**
      * Timeout in nanoseconds
      */
-    private final long nanos;
+    protected final long nanos;
     /**
      * Whether the last computation terminated due to a time limit.
      */
-    private boolean timeLimitReached;
+    protected boolean timeLimitReached;
     /**
      * The result
      */
-    private List<Set<V>> allMaximalCliques;
+    protected List<Set<V>> allMaximalCliques;
     /**
      * Size of biggest maximal clique found.
      */
-    private int maxSize;
+    protected int maxSize;
 
     /**
      * Constructor
@@ -114,33 +111,5 @@ abstract class BaseBronKerboschCliqueFinder<V, E>
      * Lazily start the computation.
      */
     protected abstract void lazyRun();
-
-	public List<Set<V>> getAllMaximalCliques() {
-		return allMaximalCliques;
-	}
-
-	public void setAllMaximalCliques(List<Set<V>> allMaximalCliques) {
-		this.allMaximalCliques = allMaximalCliques;
-	}
-
-	public int getMaxSize() {
-		return maxSize;
-	}
-
-	public void setMaxSize(int maxSize) {
-		this.maxSize = maxSize;
-	}
-
-	public Graph<V, E> getGraph() {
-		return graph;
-	}
-
-	public long getNanos() {
-		return nanos;
-	}
-
-	public void setTimeLimitReached(boolean timeLimitReached) {
-		this.timeLimitReached = timeLimitReached;
-	}
 
 }

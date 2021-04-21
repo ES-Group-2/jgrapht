@@ -17,16 +17,11 @@
  */
 package org.jgrapht.alg.clique;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
+import org.jgrapht.*;
+import org.jgrapht.traverse.*;
 
-import org.jgrapht.Graph;
-import org.jgrapht.GraphTests;
-import org.jgrapht.Graphs;
-import org.jgrapht.traverse.DegeneracyOrderingIterator;
+import java.util.*;
+import java.util.concurrent.*;
 
 /**
  * Bron-Kerbosch maximal clique enumeration algorithm with pivot and degeneracy ordering.
@@ -91,28 +86,28 @@ public class DegeneracyBronKerboschCliqueFinder<V, E>
     @Override
     protected void lazyRun()
     {
-        if (getAllMaximalCliques() == null) {
-            if (!GraphTests.isSimple(getGraph())) {
+        if (allMaximalCliques == null) {
+            if (!GraphTests.isSimple(graph)) {
                 throw new IllegalArgumentException("Graph must be simple");
             }
-            setAllMaximalCliques(new ArrayList<>());
+            allMaximalCliques = new ArrayList<>();
 
             long nanosTimeLimit;
             try {
-                nanosTimeLimit = Math.addExact(System.nanoTime(), getNanos());
+                nanosTimeLimit = Math.addExact(System.nanoTime(), nanos);
             } catch (ArithmeticException ignore) {
                 nanosTimeLimit = Long.MAX_VALUE;
             }
 
             List<V> ordering = new ArrayList<>();
-            new DegeneracyOrderingIterator<V, E>(getGraph()).forEachRemaining(ordering::add);
+            new DegeneracyOrderingIterator<V, E>(graph).forEachRemaining(ordering::add);
 
             int n = ordering.size();
             for (int i = 0; i < n; i++) {
                 V vi = ordering.get(i);
                 Set<V> viNeighbors = new HashSet<>();
-                for (E e : getGraph().edgesOf(vi)) {
-                    viNeighbors.add(Graphs.getOppositeVertex(getGraph(), e, vi));
+                for (E e : graph.edgesOf(vi)) {
+                    viNeighbors.add(Graphs.getOppositeVertex(graph, e, vi));
                 }
 
                 Set<V> P = new HashSet<>();

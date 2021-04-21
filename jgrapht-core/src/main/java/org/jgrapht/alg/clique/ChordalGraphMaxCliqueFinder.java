@@ -17,21 +17,14 @@
  */
 package org.jgrapht.alg.clique;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import org.jgrapht.*;
+import org.jgrapht.alg.color.*;
+import org.jgrapht.alg.cycle.*;
+import org.jgrapht.alg.interfaces.*;
+import org.jgrapht.traverse.*;
+import org.jgrapht.util.*;
 
-import org.jgrapht.Graph;
-import org.jgrapht.Graphs;
-import org.jgrapht.alg.color.ChordalGraphColoring;
-import org.jgrapht.alg.cycle.ChordalityInspector;
-import org.jgrapht.alg.interfaces.CliqueAlgorithm;
-import org.jgrapht.alg.interfaces.VertexColoringAlgorithm;
-import org.jgrapht.util.CollectionUtil;
+import java.util.*;
 
 /**
  * Calculates a <a href = "http://mathworld.wolfram.com/MaximumClique.html">maximum cardinality
