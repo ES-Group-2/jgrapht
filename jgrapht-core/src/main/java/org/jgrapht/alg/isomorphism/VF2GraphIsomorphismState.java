@@ -43,8 +43,7 @@ class VF2GraphIsomorphismState<V, E>
     @Override
     public boolean isFeasiblePair()
     {
-        final String pairstr =
-            (DEBUG) ? "(" + g1.getVertex(addVertex1) + ", " + g2.getVertex(addVertex2) + ")" : null;
+        final String pairstr = (DEBUG) ? "(" + g1.getVertex(addVertex1) + ", " + g2.getVertex(addVertex2) + ")" : null;
         final String abortmsg = (DEBUG) ? pairstr + " does not fit in the current matching" : null;
 
         // check for semantic equality of both vertexes
@@ -116,8 +115,7 @@ class VF2GraphIsomorphismState<V, E>
             }
         }
 
-        if ((termInSucc1 != termInSucc2) || (termOutSucc1 != termOutSucc2)
-            || (newSucc1 != newSucc2))
+        if ((termInSucc1 != termInSucc2) || (termOutSucc1 != termOutSucc2) || (newSucc1 != newSucc2))
         {
             if (DEBUG) {
                 String cause = "", v1 = g1.getVertex(addVertex1).toString(),

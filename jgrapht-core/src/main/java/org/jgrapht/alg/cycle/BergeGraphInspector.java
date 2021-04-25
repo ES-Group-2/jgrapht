@@ -75,8 +75,7 @@ public class BergeGraphInspector<V, E>
      */
     private List<V> intersectGraphPaths(GraphPath<V, E> p1, GraphPath<V, E> p2)
     {
-        List<V> res = new LinkedList<>();
-        res.addAll(p1.getVertexList());
+        List<V> res = new LinkedList<>(p1.getVertexList());
         res.retainAll(p2.getVertexList());
         return res;
     }
@@ -111,22 +110,18 @@ public class BergeGraphInspector<V, E>
             if (g.containsEdge(m, b2) || g.containsEdge(m, b3) || g.containsEdge(m, s2)
                 || g.containsEdge(m, s3) || S == null || T == null)
                 return null;
-            if (S
-                .getVertexList().stream().anyMatch(
-                    t -> g.containsEdge(t, b2) || g.containsEdge(t, b3) || g.containsEdge(t, s2)
-                        || g.containsEdge(t, s3))
-                || T
-                    .getVertexList().stream().anyMatch(
+            if (S.getVertexList().stream().anyMatch(
+                    t -> g.containsEdge(t, b2) || g.containsEdge(t, b3)
+                            || g.containsEdge(t, s2) || g.containsEdge(t, s3))
+                || T.getVertexList().stream().anyMatch(
                         t -> t != b1 && (g.containsEdge(t, b2) || g.containsEdge(t, b3)
                             || g.containsEdge(t, s2) || g.containsEdge(t, s3))))
                 return null;
             List<V> intersection = intersectGraphPaths(S, T);
             if (intersection.size() != 1 || !intersection.contains(m))
                 return null;
-            if (S
-                .getVertexList().stream().anyMatch(
-                    s -> s != m && T
-                        .getVertexList().stream().anyMatch(t -> t != m && g.containsEdge(s, t))))
+            if (S.getVertexList().stream().anyMatch(
+                    s -> s != m && T.getVertexList().stream().anyMatch(t -> t != m && g.containsEdge(s, t))))
                 return null;
             List<E> edgeList = new LinkedList<>();
             edgeList.addAll(T.getEdgeList());
@@ -141,11 +136,10 @@ public class BergeGraphInspector<V, E>
         for (V start : g.vertexSet()) {
             if (g.degreeOf(start) < 2)
                 continue;
-            Set<V> set = new HashSet<>();
-            set.addAll(g.vertexSet());
+            Set<V> set = new HashSet<>(g.vertexSet());
             for (V neighborOfStart : g.vertexSet()) {
                 if (neighborOfStart == start || !g.containsEdge(start, neighborOfStart)
-                    || g.degreeOf(neighborOfStart) != 2)
+                        || g.degreeOf(neighborOfStart) != 2)
                     continue;
                 set.remove(neighborOfStart);
                 Graph<V, E> subg = new AsSubgraph<>(g, set);
@@ -222,8 +216,7 @@ public class BergeGraphInspector<V, E>
                         // aCandidate could now be the top of the pyramid
                         for (V s1 : g.vertexSet()) {
                             if (s1 == aCandidate || !g.containsEdge(s1, aCandidate) || s1 == b2
-                                || s1 == b3
-                                || s1 != b1 && (g.containsEdge(s1, b2) || g.containsEdge(s1, b3)))
+                                || s1 == b3 || s1 != b1 && (g.containsEdge(s1, b2) || g.containsEdge(s1, b3)))
                             {
                                 continue;
                             }
@@ -231,8 +224,7 @@ public class BergeGraphInspector<V, E>
                             for (V s2 : g.vertexSet()) {
                                 if (s2 == aCandidate || !g.containsEdge(s2, aCandidate)
                                     || g.containsEdge(s1, s2) || s1 == s2 || s2 == b1 || s2 == b3
-                                    || s2 != b2
-                                        && (g.containsEdge(s2, b1) || g.containsEdge(s2, b3)))
+                                    || s2 != b2 && (g.containsEdge(s2, b1) || g.containsEdge(s2, b3)))
                                 {
                                     continue;
                                 }
@@ -241,8 +233,7 @@ public class BergeGraphInspector<V, E>
                                     if (s3 == aCandidate || !g.containsEdge(s3, aCandidate)
                                         || g.containsEdge(s3, s2) || s1 == s3 || s3 == s2
                                         || g.containsEdge(s1, s3) || s3 == b1 || s3 == b2
-                                        || s3 != b3
-                                            && (g.containsEdge(s3, b1) || g.containsEdge(s3, b2)))
+                                        || s3 != b3 && (g.containsEdge(s3, b1) || g.containsEdge(s3, b2)))
                                     {
                                         continue;
                                     }
@@ -257,10 +248,9 @@ public class BergeGraphInspector<V, E>
                                     M.remove(s2);
                                     M.remove(s3);
 
-                                    Map<V, GraphPath<V, E>> S1 = new HashMap<>(),
-                                        S2 = new HashMap<>(), S3 = new HashMap<>(),
-                                        T1 = new HashMap<>(), T2 = new HashMap<>(),
-                                        T3 = new HashMap<>();
+                                    Map<V, GraphPath<V, E>> S1 = new HashMap<>(), S2 = new HashMap<>(),
+                                            S3 = new HashMap<>(), T1 = new HashMap<>(),
+                                            T2 = new HashMap<>(), T3 = new HashMap<>();
 
                                     // find paths which could be the edges of the pyramid
                                     FindPaths(g, b1, b2, b3, s1, s2, s3, M, S1, S2, S3, T1, T2, T3);
@@ -850,10 +840,8 @@ public class BergeGraphInspector<V, E>
     private Set<V> findMaximalConnectedSubset(Graph<V, E> g, Set<V> X, V v1, V v2, V v5)
     {
         Set<V> FPrime = new ConnectivityInspector<>(g).connectedSetOf(v5);
-        FPrime
-            .removeIf(
-                t -> t != v5 && isYXComplete(g, t, X) || v1 == t || v2 == t || g.containsEdge(v1, t)
-                    || g.containsEdge(v2, t));
+        FPrime.removeIf(t -> t != v5 && isYXComplete(g, t, X)
+                        || v1 == t || v2 == t || g.containsEdge(v1, t) || g.containsEdge(v2, t));
         return FPrime;
     }
 
