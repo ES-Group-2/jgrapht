@@ -96,7 +96,7 @@ public class BergeGraphInspector<V, E>
      * @param s3 A vertex
      * @return The conjunct path of S and T
      */
-    private GraphPath<V, E> P(
+    private GraphPath<V, E> JoinPaths(
         Graph<V, E> g, GraphPath<V, E> S, GraphPath<V, E> T, V m, V b1, V b2, V b3, V s1, V s2, V s3)
     {
         if (s1 == b1) {
@@ -133,7 +133,6 @@ public class BergeGraphInspector<V, E>
             edgeList.addAll(S.getEdgeList());
             double weight = edgeList.stream().mapToDouble(g::getEdgeWeight).sum();
             return new GraphWalk<>(g, b1, s1, edgeList, weight);
-
         }
     }
 
@@ -156,12 +155,10 @@ public class BergeGraphInspector<V, E>
                         || g.containsEdge(neighborsNeighbor, start)
                         || g.degreeOf(neighborsNeighbor) < 2)
                         continue;
-                    GraphPath<V, E> path =
-                        new DijkstraShortestPath<>(subg).getPath(start, neighborsNeighbor);
+                    GraphPath<V, E> path = new DijkstraShortestPath<>(subg).getPath(start, neighborsNeighbor);
                     if (path == null || path.getLength() < 3 || path.getLength() % 2 == 0)
                         continue;
-                    List<E> edgeList = new LinkedList<>();
-                    edgeList.addAll(path.getEdgeList());
+                    List<E> edgeList = new LinkedList<>(path.getEdgeList());
                     edgeList.add(g.getEdge(neighborsNeighbor, neighborOfStart));
                     edgeList.add(g.getEdge(neighborOfStart, start));
                     double weight = edgeList.stream().mapToDouble(g::getEdgeWeight).sum();
@@ -252,8 +249,7 @@ public class BergeGraphInspector<V, E>
 
                                     // s1, s2, s3 could now be the closest vertices to the top
                                     // vertex of the pyramid
-                                    Set<V> M = new HashSet<>();
-                                    M.addAll(g.vertexSet());
+                                    Set<V> M = new HashSet<>(g.vertexSet());
                                     M.remove(b1);
                                     M.remove(b2);
                                     M.remove(b3);
@@ -290,18 +286,18 @@ public class BergeGraphInspector<V, E>
         Set<V> M1 = new HashSet<>(M);
         M1.add(b1);
         for (V m1 : M1) {
-            GraphPath<V, E> P1 = P(g, S1.get(m1), T1.get(m1), m1, b1, b2, b3, s1, s2, s3);
+            GraphPath<V, E> P1 = JoinPaths(g, S1.get(m1), T1.get(m1), m1, b1, b2, b3, s1, s2, s3);
             if (P1 == null)
                 continue;
 
             for (V m2 : M) {
-                GraphPath<V, E> P2 = P(g, S2.get(m2), T2.get(m2), m2, b2, b1, b3, s2, s1, s3);
+                GraphPath<V, E> P2 = JoinPaths(g, S2.get(m2), T2.get(m2), m2, b2, b1, b3, s2, s1, s3);
                 if (P2 == null)
                     continue;
                 Set<V> M3 = new HashSet<>(M);
                 M3.add(b3);
                 for (V m3 : M3) {
-                    GraphPath<V, E> P3 = P(g, S3.get(m3), T3.get(m3), m3, b3, b1, b2, s3, s1, s2);
+                    GraphPath<V, E> P3 = JoinPaths(g, S3.get(m3), T3.get(m3), m3, b3, b1, b2, s3, s1, s2);
                     if (P3 == null)
                         continue;
                     if (certify) {
@@ -912,76 +908,79 @@ public class BergeGraphInspector<V, E>
                             Y.add(y);
                         }
                     }
-                    List<Set<V>> anticomponents = findAllAnticomponentsOfY(g, Y);
-                    for (Set<V> X : anticomponents) {
-                        Set<V> FPrime = findMaximalConnectedSubset(g, X, v1, v2, v5);
-                        Set<V> F = new HashSet<>();
-                        F.addAll(FPrime);
-                        for (V x : X) {
-                            if (!g.containsEdge(x, v1) && !g.containsEdge(x, v2)
-                                && !g.containsEdge(x, v5) && hasANeighbour(g, FPrime, x))
-                                F.add(x);
-                        }
+                    if (Anticomponents(g, v1, v2, v5, Y))
+                        return true;
+                }
+            }
+        }
+        return false;
+    }
 
-                        for (V v4 : g.vertexSet()) {
-                            if (v4 == v1 || v4 == v2 || v4 == v5 || g.containsEdge(v2, v4)
-                                || g.containsEdge(v5, v4) || !g.containsEdge(v1, v4)
-                                || !hasANeighbour(g, F, v4) || !hasANonneighbourInX(g, v4, X)
-                                || isYXComplete(g, v4, X))
-                                continue;
+    private boolean Anticomponents(Graph<V, E> g, V v1, V v2, V v5, Set<V> Y)
+    {
+        List<Set<V>> anticomponents = findAllAnticomponentsOfY(g, Y);
+        for (Set<V> X : anticomponents) {
+            Set<V> FPrime = findMaximalConnectedSubset(g, X, v1, v2, v5);
+            Set<V> F = new HashSet<>(FPrime);
+            for (V x : X) {
+                if (!g.containsEdge(x, v1) && !g.containsEdge(x, v2)
+                    && !g.containsEdge(x, v5) && hasANeighbour(g, FPrime, x))
+                    F.add(x);
+            }
 
-                            for (V v3 : g.vertexSet()) {
-                                if (v3 == v1 || v3 == v2 || v3 == v4 || v3 == v5
-                                    || !g.containsEdge(v2, v3) || !g.containsEdge(v3, v4)
-                                    || !g.containsEdge(v5, v3) || g.containsEdge(v1, v3)
-                                    || !hasANonneighbourInX(g, v3, X) || isYXComplete(g, v3, X))
-                                    continue;
-                                for (V v6 : F) {
-                                    if (v6 == v1 || v6 == v2 || v6 == v3 || v6 == v4 || v6 == v5
-                                        || !g.containsEdge(v4, v6) || g.containsEdge(v1, v6)
-                                        || g.containsEdge(v2, v6)
-                                        || g.containsEdge(v5, v6) && !isYXComplete(g, v6, X))
-                                        continue;
-                                    Set<V> verticesForPv5v6 = new HashSet<>(FPrime);
-                                    verticesForPv5v6.add(v5);
-                                    verticesForPv5v6.add(v6);
-                                    verticesForPv5v6.remove(v1);
-                                    verticesForPv5v6.remove(v2);
-                                    verticesForPv5v6.remove(v3);
-                                    verticesForPv5v6.remove(v4);
+            for (V v4 : g.vertexSet()) {
+                if (v4 == v1 || v4 == v2 || v4 == v5 || g.containsEdge(v2, v4)
+                    || g.containsEdge(v5, v4) || !g.containsEdge(v1, v4)
+                    || !hasANeighbour(g, F, v4) || !hasANonneighbourInX(g, v4, X)
+                    || isYXComplete(g, v4, X))
+                    continue;
 
-                                    if (new ConnectivityInspector<>(
-                                        new AsSubgraph<>(g, verticesForPv5v6)).pathExists(v6, v5))
-                                    {
-                                        if (certify) {
-                                            List<E> edgeList = new LinkedList<>();
-                                            edgeList.add(g.getEdge(v1, v4));
-                                            edgeList.add(g.getEdge(v4, v6));
-                                            GraphPath<V, E> P =
-                                                new DijkstraShortestPath<>(g).getPath(v6, v5);
-                                            edgeList.addAll(P.getEdgeList());
-                                            if (P.getLength() % 2 == 1) {
-                                                V x = X.iterator().next();
-                                                edgeList.add(g.getEdge(v5, x));
-                                                edgeList.add(g.getEdge(x, v1));
-                                            } else {
-                                                edgeList.add(g.getEdge(v5, v3));
-                                                edgeList.add(g.getEdge(v3, v4));
-                                                edgeList.add(g.getEdge(v4, v1));
-                                            }
+                for (V v3 : g.vertexSet()) {
+                    if (v3 == v1 || v3 == v2 || v3 == v4 || v3 == v5
+                        || !g.containsEdge(v2, v3) || !g.containsEdge(v3, v4)
+                        || !g.containsEdge(v5, v3) || g.containsEdge(v1, v3)
+                        || !hasANonneighbourInX(g, v3, X) || isYXComplete(g, v3, X))
+                        continue;
 
-                                            double weight = edgeList
-                                                .stream().mapToDouble(g::getEdgeWeight).sum();
-                                            certificate =
-                                                new GraphWalk<>(g, v1, v1, edgeList, weight);
-                                        }
-                                        return true;
-                                    }
+                    for (V v6 : F) {
+                        if (v6 == v1 || v6 == v2 || v6 == v3 || v6 == v4 || v6 == v5
+                            || !g.containsEdge(v4, v6) || g.containsEdge(v1, v6)
+                            || g.containsEdge(v2, v6)
+                            || g.containsEdge(v5, v6) && !isYXComplete(g, v6, X))
+                            continue;
+                        Set<V> verticesForPv5v6 = new HashSet<>(FPrime);
+                        verticesForPv5v6.add(v5);
+                        verticesForPv5v6.add(v6);
+                        verticesForPv5v6.remove(v1);
+                        verticesForPv5v6.remove(v2);
+                        verticesForPv5v6.remove(v3);
+                        verticesForPv5v6.remove(v4);
 
+                        if (new ConnectivityInspector<>(
+                            new AsSubgraph<>(g, verticesForPv5v6)).pathExists(v6, v5))
+                        {
+                            if (certify) {
+                                List<E> edgeList = new LinkedList<>();
+                                edgeList.add(g.getEdge(v1, v4));
+                                edgeList.add(g.getEdge(v4, v6));
+                                GraphPath<V, E> P =
+                                    new DijkstraShortestPath<>(g).getPath(v6, v5);
+                                edgeList.addAll(P.getEdgeList());
+                                if (P.getLength() % 2 == 1) {
+                                    V x = X.iterator().next();
+                                    edgeList.add(g.getEdge(v5, x));
+                                    edgeList.add(g.getEdge(x, v1));
+                                } else {
+                                    edgeList.add(g.getEdge(v5, v3));
+                                    edgeList.add(g.getEdge(v3, v4));
+                                    edgeList.add(g.getEdge(v4, v1));
                                 }
 
+                                double weight = edgeList
+                                    .stream().mapToDouble(g::getEdgeWeight).sum();
+                                certificate = new GraphWalk<>(g, v1, v1, edgeList, weight);
                             }
-
+                            return true;
                         }
                     }
                 }
@@ -1068,8 +1067,7 @@ public class BergeGraphInspector<V, E>
      */
     private Set<V> W(Graph<V, E> g, Set<V> Nab, V c)
     {
-        Set<V> temp = new HashSet<V>();
-        temp.addAll(Nab);
+        Set<V> temp = new HashSet<>(Nab);
         temp.add(c);
         List<Set<V>> anticomponents = findAllAnticomponentsOfY(g, temp);
         for (Set<V> anticomponent : anticomponents)
