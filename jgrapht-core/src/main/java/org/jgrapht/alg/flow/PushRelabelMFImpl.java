@@ -63,8 +63,8 @@ public class PushRelabelMFImpl<V, E>
     // Diagnostic
     private static final boolean DIAGNOSTIC_ENABLED = false;
 
-    public static boolean USE_GLOBAL_RELABELING_HEURISTIC = true;
-    public static boolean USE_GAP_RELABELING_HEURISTIC = true;
+    public static final boolean USE_GLOBAL_RELABELING_HEURISTIC = true;
+    public static final boolean USE_GAP_RELABELING_HEURISTIC = true;
 
     private final ExtensionFactory<VertexExtension> vertexExtensionsFactory;
     private final ExtensionFactory<AnnotatedFlowEdge> edgeExtensionsFactory;
@@ -256,7 +256,7 @@ public class PushRelabelMFImpl<V, E>
     /*
      * The basic operation PUSH(u, v) is applied if u in an overflowing vertex (i.e. has excess) and
      * u.height = v.height + 1.
-     * 
+     *
      * The operation can be either saturating (if ux.excess >= ex.capacity - ex.flow) or
      * nonsaturating (otherwise).
      */
@@ -294,7 +294,7 @@ public class PushRelabelMFImpl<V, E>
     /*
      * The basic operation RELABEL(u) is applied if u is overflowing (i.e. has excess) and if
      * u.height <= v.height + 1.
-     * 
+     *
      * We can relabel an overflowing vertex $u$ if for every vertex v for which there is residual
      * capacity from u to v, flow cannot be pushed from u to v because v is not downhill from u.
      */
@@ -351,7 +351,7 @@ public class PushRelabelMFImpl<V, E>
     /*
      * The global relabeling heuristic updates the height function by computing shortest path
      * distances in the residual graph from all nodes to the sink.
-     * 
+     *
      * This can be done in linear time by a backwards breadth-first search.
      */
     private void recomputeHeightsHeuristic()
