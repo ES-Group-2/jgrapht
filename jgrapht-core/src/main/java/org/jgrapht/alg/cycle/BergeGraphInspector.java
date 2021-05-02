@@ -765,8 +765,7 @@ public class BergeGraphInspector<V, E>
                                 continue;
 
                             GraphPath<V, E> Path =
-                                new DijkstraShortestPath<>(new AsSubgraph<>(g, v2v3))
-                                    .getPath(v1, v4);
+                                new DijkstraShortestPath<>(new AsSubgraph<>(g, v2v3)).getPath(v1, v4);
                             if (Path == null)
                                 continue;
                             List<V> P = Path.getVertexList();
@@ -797,12 +796,10 @@ public class BergeGraphInspector<V, E>
                                         edgeList.add(g.getEdge(x, v1));
                                     }
 
-                                    double weight =
-                                        edgeList.stream().mapToDouble(g::getEdgeWeight).sum();
+                                    double weight = edgeList.stream().mapToDouble(g::getEdgeWeight).sum();
                                     certificate = new GraphWalk<>(g, v1, v1, edgeList, weight);
                                 }
                                 return true;
-
                             }
                         }
                     }

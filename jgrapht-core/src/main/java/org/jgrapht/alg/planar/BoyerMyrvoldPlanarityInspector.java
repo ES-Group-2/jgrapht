@@ -1297,14 +1297,10 @@ public class BoyerMyrvoldPlanarityInspector<V, E>
             Edge xBackEdge = searchEdge(x, v.height);
             Edge yBackEdge = searchEdge(y, v.height);
             if (DEBUG) {
-                System.out
-                    .printf(
-                        "Failed v = %s, failed edge = %s\n", failedV.toString(false),
+                System.out.printf("Failed v = %s, failed edge = %s\n", failedV.toString(false),
                         failedEdge.toString());
                 System.out.printf("x = %s, y = %s\n", x.toString(false), y.toString(false));
-                System.out
-                    .printf(
-                        "xBackEdge = %s, yBackEdge = %s\n", xBackEdge.toString(),
+                System.out.printf("xBackEdge = %s, yBackEdge = %s\n", xBackEdge.toString(),
                         yBackEdge.toString());
             }
             Node backLower = lowest(xBackEdge.target, yBackEdge.target);
@@ -1335,8 +1331,7 @@ public class BoyerMyrvoldPlanarityInspector<V, E>
                 }
                 addPathEdges(subdivision, backEdge, w);
                 addPathEdges(subdivision, failedEdge, w);
-                Node highest =
-                    highest(xBackEdge.target, highest(yBackEdge.target, backEdge.target));
+                Node highest = highest(xBackEdge.target, highest(yBackEdge.target, backEdge.target));
                 Node lowest = lowest(xBackEdge.target, lowest(yBackEdge.target, backEdge.target));
                 addPathEdges(subdivision, highest, lowest);
                 return finish(subdivision);
