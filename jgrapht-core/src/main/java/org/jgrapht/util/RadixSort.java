@@ -31,7 +31,7 @@ import java.util.*;
 public class RadixSort
 {
 
-    public static int CUT_OFF = 40;
+    public static final int CUT_OFF = 40;
 
     private static final int MAX_DIGITS = 32;
     private static final int MAX_D = 4;

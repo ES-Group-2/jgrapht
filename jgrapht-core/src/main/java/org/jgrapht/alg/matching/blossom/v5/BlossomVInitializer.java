@@ -878,8 +878,7 @@ class BlossomVInitializer<V, E>
                             currentNode = currentNode.treeSiblingNext.getOppositeMatched();
                         } else if (currentNode == branchRoot) {
                             // we've processed all nodes in the current branch
-                            BlossomVEdge minSlackEdge =
-                                heap.isEmpty() ? null : heap.findMin().getValue();
+                            BlossomVEdge minSlackEdge = heap.isEmpty() ? null : heap.findMin().getValue();
                             if (minSlackEdge == null || minSlackEdge.slack >= criticalEps) {
                                 // can perform primal operation after updating duals
                                 if (DEBUG) {
@@ -914,8 +913,7 @@ class BlossomVInitializer<V, E>
                                 if (DEBUG) {
                                     System.out
                                         .println(
-                                            "New branch root is " + plusNode + ", eps = "
-                                                + branchEps);
+                                            "New branch root is " + plusNode + ", eps = " + branchEps);
                                 }
                                 // Start a new branch
                                 currentNode = branchRoot = plusNode;

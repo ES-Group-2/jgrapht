@@ -94,7 +94,7 @@ public abstract class GraphMetrics
      * An algorithm with the same worst case runtime complexity, but a potentially better average
      * runtime complexity of $O(n^2)$ is described in: Itai, A. Rodeh, M. Finding a minimum circuit
      * in a graph. SIAM J. Comput. Vol 7, No 4, 1987.
-     * 
+     *
      * @param graph input graph
      * @param <V> graph vertex type
      * @param <E> graph edge type
@@ -245,7 +245,7 @@ public abstract class GraphMetrics
                         if (wuEdgeCount == 0) {
                             continue;
                         }
-                        total += uvEdgeCount * vwEdgeCount * wuEdgeCount;
+                        total += (long) uvEdgeCount * vwEdgeCount * wuEdgeCount;
                     }
                 }
             }
