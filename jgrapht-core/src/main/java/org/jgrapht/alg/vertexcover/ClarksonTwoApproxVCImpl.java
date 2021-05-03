@@ -50,7 +50,7 @@ public class ClarksonTwoApproxVCImpl<V, E>
 
     /**
      * Constructs a new ClarksonTwoApproxVCImpl instance where all vertices have uniform weights.
-     * 
+     *
      * @param graph input graph
      */
     public ClarksonTwoApproxVCImpl(Graph<V, E> graph)
@@ -62,7 +62,7 @@ public class ClarksonTwoApproxVCImpl<V, E>
 
     /**
      * Constructs a new ClarksonTwoApproxVCImpl instance
-     * 
+     *
      * @param graph input graph
      * @param vertexWeightMap mapping of vertex weights
      */
@@ -102,8 +102,7 @@ public class ClarksonTwoApproxVCImpl<V, E>
                             ux))) : " in an undirected graph, if vx is a neighbor of ux, then ux must be a neighbor of vx";
         }
 
-        TreeSet<RatioVertex<V>> workingGraph = new TreeSet<>();
-        workingGraph.addAll(vertexEncapsulationMap.values());
+        TreeSet<RatioVertex<V>> workingGraph = new TreeSet<>(vertexEncapsulationMap.values());
         assert (workingGraph.size() == vertexEncapsulationMap
             .size()) : "vertices in vertexEncapsulationMap: " + graph.vertexSet().size()
                 + "vertices in working graph: " + workingGraph.size();

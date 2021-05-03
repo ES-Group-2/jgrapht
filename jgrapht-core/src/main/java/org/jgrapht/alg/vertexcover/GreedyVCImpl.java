@@ -56,7 +56,7 @@ public class GreedyVCImpl<V, E>
 
     /**
      * Constructs a new GreedyVCImpl instance where all vertices have uniform weights.
-     * 
+     *
      * @param graph input graph
      */
     public GreedyVCImpl(Graph<V, E> graph)
@@ -68,7 +68,7 @@ public class GreedyVCImpl<V, E>
 
     /**
      * Constructs a new GreedyVCImpl instance
-     * 
+     *
      * @param graph input graph
      * @param vertexWeightMap mapping of vertex weights
      */
@@ -113,8 +113,7 @@ public class GreedyVCImpl<V, E>
                     ux).intValue()) : " in an undirected graph, if vx is a neighbor of ux, then ux must be a neighbor of vx";
         }
 
-        TreeSet<RatioVertex<V>> workingGraph = new TreeSet<>();
-        workingGraph.addAll(vertexEncapsulationMap.values());
+        TreeSet<RatioVertex<V>> workingGraph = new TreeSet<>(vertexEncapsulationMap.values());
         assert (workingGraph.size() == vertexEncapsulationMap
             .size()) : "vertices in vertexEncapsulationMap: " + graph.vertexSet().size()
                 + "vertices in working graph: " + workingGraph.size();
