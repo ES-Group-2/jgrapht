@@ -120,19 +120,7 @@ final class GraphOrdering<V, E>
         V v = getVertex(vertexNumber);
         Set<E> edgeSet = graph.outgoingEdgesOf(v);
 
-        int[] vertexArray = new int[edgeSet.size()];
-        int i = 0;
-
-        for (E edge : edgeSet) {
-            V source = graph.getEdgeSource(edge), target = graph.getEdgeTarget(edge);
-            vertexArray[i++] = mapVertexToOrder.get(source.equals(v) ? target : source);
-        }
-
-        if (cacheEdges) {
-            outgoingEdges[vertexNumber] = vertexArray;
-        }
-
-        return vertexArray;
+        return getVextexArray(vertexNumber, v, (Set<E>) edgeSet, outgoingEdges);
     }
 
     /**
@@ -150,6 +138,10 @@ final class GraphOrdering<V, E>
         V v = getVertex(vertexNumber);
         Set<E> edgeSet = graph.incomingEdgesOf(v);
 
+        return getVextexArray(vertexNumber, v, edgeSet, incomingEdges);
+    }
+
+    private int[] getVextexArray(int vertexNumber, V v, Set<E> edgeSet, int[][] incomingEdges) {
         int[] vertexArray = new int[edgeSet.size()];
         int i = 0;
 
@@ -200,9 +192,8 @@ final class GraphOrdering<V, E>
 
         V v1 = getVertex(v1Number);
         V v2 = getVertex(v2Number);
-        boolean containsEdge = graph.containsEdge(v1, v2);
 
-        return containsEdge;
+        return graph.containsEdge(v1, v2);
     }
 
     /**
@@ -233,16 +224,13 @@ final class GraphOrdering<V, E>
                 // edge cache has not been initialized yet for this element
                 hasEdge(v1Number, v2Number);
             }
-            final E edge = edgeCache[cacheIndex];
 
-            return edge;
+            return edgeCache[cacheIndex];
         }
 
         V v1 = getVertex(v1Number), v2 = getVertex(v2Number);
 
-        E edge = graph.getEdge(v1, v2);
-
-        return edge;
+        return graph.getEdge(v1, v2);
     }
 
     public int getVertexNumber(V v)

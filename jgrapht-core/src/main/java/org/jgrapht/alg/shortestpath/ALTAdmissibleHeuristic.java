@@ -180,6 +180,16 @@ public class ALTAdmissibleHeuristic<V, E>
     private void precomputeToFromLandmark(V landmark)
     {
         // compute distances from landmark
+        computeDistance(landmark, graph, fromLandmark);
+
+        // compute distances to landmark (using reverse graph)
+        if (directed) {
+            Graph<V, E> reverseGraph = new EdgeReversedGraph<>(graph);
+            computeDistance(landmark, (Graph<V, E>) reverseGraph, (Map<V, Map<V, Double>>) toLandmark);
+        }
+    }
+
+    private void computeDistance(V landmark, Graph<V, E> graph, Map<V, Map<V, Double>> fromLandmark) {
         SingleSourcePaths<V, E> fromLandmarkPaths =
             new DijkstraShortestPath<>(graph).getPaths(landmark);
         Map<V, Double> fromLandMarkDistances = new HashMap<>();
@@ -187,18 +197,6 @@ public class ALTAdmissibleHeuristic<V, E>
             fromLandMarkDistances.put(v, fromLandmarkPaths.getWeight(v));
         }
         fromLandmark.put(landmark, fromLandMarkDistances);
-
-        // compute distances to landmark (using reverse graph)
-        if (directed) {
-            Graph<V, E> reverseGraph = new EdgeReversedGraph<>(graph);
-            SingleSourcePaths<V, E> toLandmarkPaths =
-                new DijkstraShortestPath<>(reverseGraph).getPaths(landmark);
-            Map<V, Double> toLandMarkDistances = new HashMap<>();
-            for (V v : graph.vertexSet()) {
-                toLandMarkDistances.put(v, toLandmarkPaths.getWeight(v));
-            }
-            toLandmark.put(landmark, toLandMarkDistances);
-        }
     }
 
     /**
