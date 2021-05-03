@@ -221,10 +221,8 @@ public class DinicMFImpl<V, E>
      */
     public void dinic()
     {
-        for (;;) {
-            if (!bfs()) {
-                break;
-            }
+
+        while (bfs()) {
             for (V v : network.vertexSet()) {
                 getVertexExtension(v).index = 0;
             }
