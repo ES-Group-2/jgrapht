@@ -153,11 +153,11 @@ public class ALTAdmissibleHeuristic<V, E>
         /*
          * Compute from landmarks
          */
-        for (V l : fromLandmark.keySet()) {
+        for (Map.Entry<V, Map<V, Double>> entry : fromLandmark.entrySet()) {
             double estimate;
-            Map<V, Double> from = fromLandmark.get(l);
+            Map<V, Double> from = entry.getValue();
             if (directed) {
-                Map<V, Double> to = toLandmark.get(l);
+                Map<V, Double> to = toLandmark.get(entry.getKey());
                 estimate = Math.max(to.get(u) - to.get(t), from.get(t) - from.get(u));
             } else {
                 estimate = Math.abs(from.get(u) - from.get(t));
@@ -185,7 +185,7 @@ public class ALTAdmissibleHeuristic<V, E>
         // compute distances to landmark (using reverse graph)
         if (directed) {
             Graph<V, E> reverseGraph = new EdgeReversedGraph<>(graph);
-            computeDistance(landmark, (Graph<V, E>) reverseGraph, (Map<V, Map<V, Double>>) toLandmark);
+            computeDistance(landmark, reverseGraph, toLandmark);
         }
     }
 

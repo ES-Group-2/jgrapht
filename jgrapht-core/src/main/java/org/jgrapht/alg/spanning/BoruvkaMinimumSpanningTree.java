@@ -25,18 +25,18 @@ import java.util.*;
 
 /**
  * Borůvka's algorithm for the computation of a minimum spanning tree.
- * 
+ *
  * <p>
  * See the article on
  * <a href="https://en.wikipedia.org/wiki/Bor%C5%AFvka%27s_algorithm">wikipedia</a> for more
  * information on the history of the algorithm.
- * 
+ *
  * <p>
  * This implementation uses a union-find data structure (with union by rank and path compression
  * heuristic) in order to track components. In graphs where edges have identical weights, edges with
  * equal weights are ordered lexicographically. The running time is $O((E+V) \log V)$ under the
  * assumption that the union-find uses path-compression.
- * 
+ *
  * @param <V> the graph vertex type
  * @param <E> the graph edge type
  *
@@ -51,7 +51,7 @@ public class BoruvkaMinimumSpanningTree<V, E>
 
     /**
      * Construct a new instance of the algorithm.
-     * 
+     *
      * @param graph the input graph
      */
     public BoruvkaMinimumSpanningTree(Graph<V, E> graph)
@@ -121,8 +121,8 @@ public class BoruvkaMinimumSpanningTree<V, E>
             }
 
             // add safe edges to forest
-            for (V v : bestEdge.keySet()) {
-                E e = bestEdge.get(v);
+            for (Map.Entry<V, E> entry : bestEdge.entrySet()) {
+                E e = entry.getValue();
 
                 V sTree = forest.find(graph.getEdgeSource(e));
                 V tTree = forest.find(graph.getEdgeTarget(e));

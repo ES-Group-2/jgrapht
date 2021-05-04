@@ -62,7 +62,7 @@ public class TiernanSimpleCycles<V, E>
 
     /**
      * Get the graph
-     * 
+     *
      * @return graph
      */
     public Graph<V, E> getGraph()
@@ -72,7 +72,7 @@ public class TiernanSimpleCycles<V, E>
 
     /**
      * Set the graph
-     * 
+     *
      * @param graph graph
      */
     public void setGraph(Graph<V, E> graph)
@@ -164,9 +164,11 @@ public class TiernanSimpleCycles<V, E>
                 endOfPath = vertexIterator.next();
                 path.add(endOfPath);
                 pathSet.add(endOfPath);
-                for (V vt : blocked.keySet()) {
-                    blocked.get(vt).clear();
+
+                for (Map.Entry<V, Set<V>> entry : blocked.entrySet()) {
+                    entry.getValue().clear();
                 }
+
                 continue;
             }
 
