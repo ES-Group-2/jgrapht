@@ -107,12 +107,10 @@ public final class EdmondsKarpMFImpl<V, E>
 
         this.edgeExtensionsFactory = () -> new AnnotatedFlowEdge();
 
-        if (network == null) {
-            throw new NullPointerException("network is null");
-        }
         if (epsilon <= 0) {
             throw new IllegalArgumentException("invalid epsilon (must be positive)");
         }
+        
         for (E e : network.edgeSet()) {
             if (network.getEdgeWeight(e) < -epsilon) {
                 throw new IllegalArgumentException("invalid capacity (must be non-negative)");
